@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {VStack, Heading, Center} from 'native-base'
 import { useForm, Controller } from 'react-hook-form'
 import { useState } from 'react';
@@ -16,27 +17,38 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = async (data: FormDataProps) => {
+    console.log('Dados de login:', data);
     try {
-      setIsLoading(true); 
+      setIsLoading(true);
       console.log('Iniciando requisição de login...');
-      const response = await fetch('https://sgcm.com.br/api/login', {
+  
+      const response = await fetch('http://vrupt.com.br/api/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          cpf: encodeURIComponent(data.cpf),
+          password: encodeURIComponent(data.password)
+        })
       });
-      const json = await response.json();
-      console.log('Resposta da requisição de login:', json);
-      setIsLoading(false); 
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Resposta da requisição de login:', data);
+      } else {
+        console.error('Erro ao efetuar login:', response.status);
+      }
+  
+      setIsLoading(false);
     } catch (error) {
       console.error('Erro ao efetuar login:', error);
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   }
-
+  
   return (
-    <VStack bgColor='gray.500' flex={1} px={10} >
+    <VStack bgColor='gray.800' flex={1} px={10} >
       <Center mt={40}>
       <Image
         source={require('../../assets/favicon.png')}
@@ -49,29 +61,21 @@ export default function SignIn() {
         <Controller 
           control={control}
           name='cpf'
-          rules={{
-            required: 'Informe o seu CPF',
-            minLength: {
-              value: 9,
-              message: 'CPF deve possuir 11 dígitos'
-            }
-          }}
+          rules={{ required: 'Campo obrigatório' }}
           render={({ field: { onChange } }) =>(
             <Input 
-              placeholder='CPF' 
-              placeholderTextColor='white' 
-              errorMessage={errors.cpf?.message}
-              onChangeText={onChange}
+            placeholder='CPF' 
+            placeholderTextColor='white' 
+            errorMessage={errors.cpf?.message}
+            onChangeText={onChange}
             />
-          )}
+            )}
         />
 
         <Controller 
           control={control}
           name='password'
-          rules={{
-            required: 'Informe sua senha'
-          }}
+          rules={{ required: 'Campo obrigatório' }}
           render={({ field: { onChange } }) => (
             <Input 
               placeholder='Senha' 
