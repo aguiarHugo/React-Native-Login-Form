@@ -10,12 +10,12 @@ export default function Input({errorMessage = null, isInvalid, ...rest }: Props)
   return(
     <FormControl mb={4} isInvalid={invalid}>
       <NativeBaseInput
-        bg="gray.400"
+        bg="gray.700"
         fontSize="md"
         h={16}
         isInvalid={invalid}
         _focus={{
-          bgColor: "gray.200",
+          bgColor: "gray.500",
           borderWidth: 2,
           borderColor: "green.500"
         }}
